@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 将对象的创建交给spring容器， 在这个配置文件中声明要什么对象
+         class 要写java类的全限定类型，它是通过全类名然后使用反射进行创建
+         id  给这个对象在整个应用程序上下文中取个名字以方便区分
+         abstract 该bean无法被实例
+         parent 继承自，通过id进行指引
+         destroy-method 当前bean销毁时执行的方法
+         init-method 指定bean的初始化方法
+         name 别名
+         lazy-init 延迟初始化 用的时候初始化
+    -->
+    <!--    <bean class="com.f.pojo.Girl" id="girl1">-->
+    <!--    </bean>-->
+
+    <bean class="com.f.pojo.PrettyGirl" id="girl" destroy-method="clearDress">
+        <!-- name 指定要注入的属性名称 value为值, 必须有setter和无参构造器
+             ref 指向另外一个bean的id -->
+        <property name="name" value="lily"/>
+
+    </bean>
+
+    <!-- 测试有参构造-->
+    <bean class="com.f.pojo.Dog" id='dog'>
+        <constructor-arg name="name" value="哮天"/>
+    </bean>
+
+    <bean class="com.f.pojo.Car" id="car">
+        <constructor-arg name="name" value="宝马"/>
+        <constructor-arg name="price" value="3333"/>
+        <constructor-arg name="speed" value="1000"/>
+    </bean>
+
+</beans>

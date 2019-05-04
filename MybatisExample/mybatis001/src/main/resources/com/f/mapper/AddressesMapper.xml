@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f.f.mapper.AddressesMapper">
+
+    <!-- 开启二级缓存-->
+    <cache/>
+
+
+    <!--    根据传入的对象动态修改其中的值， 如果某个字段传入的非空值， 否则不修改-->
+    <update id="update" parameterType="com.f.f.pojo.Addresses">
+        update addresses
+        <set>
+            <if test="city != null and city != ''">
+                city = #{city},
+            </if>
+            <if test="country != null and country != ''">
+                city = #{country},
+            </if>
+            <if test="street != null and street != ''">
+                city = #{street},
+            </if>
+            <if test="state != null and state != ''">
+                city = #{state},
+            </if>
+            <if test="zip != null and zip != ''">
+                city = #{zip}
+            </if>
+        </set>
+
+        <where>
+            addr_id = #{addrId}
+        </where>
+    </update>
+
+    <select id="queryById" resultType="com.f.f.mapper.AddressesMapper">
+        select * from addresses where id = #{id}
+    </select>
+
+    <!--    并不能确定是否一定有参数，所以用动态sql, if, where 其他的动态sql看文档-->
+    <select id="queryByCountryCity" resultType="com.f.f.pojo.Addresses">
+        select * from addresses
+        <where>
+            <if test="city != null and city != '' ">
+                and city=#{city}
+            </if>
+
+            <if test="country != null">
+                and
+                country=#{country}
+            </if>
+        </where>
+
+
+    </select>
+
+
+    <select id="query" resultType="com.f.f.pojo.Addresses" parameterType="com.f.f.pojo.Addresses">
+        select * from addresses
+        <where>
+            <choose>
+                <when test="country != null">
+                    and country = #{country}
+                </when>
+                <when test="state != null">
+                    and state = #{state}
+                </when>
+                <otherwise>
+                    and city = #{city}
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <!--    测试foreach
+        collection 苗书集合
+        open sql语句拼接以什么开头
+        item 数据项代号
+        separator item 之间的分隔符
+        index 标号 可选项
+    -->
+    <select id="queryByIds" resultType="com.f.f.pojo.Addresses">
+        select * from addresses
+        <where>
+            addr_id in
+            <foreach collection="list" open="(" close=")" item="item" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+
+    <!--    模糊查询-->
+    <select id="queryLike" resultType="com.f.f.pojo.Addresses">
+        select * from addresses where city like #{city}
+    </select>
+
+
+</mapper>

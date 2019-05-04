@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 配置一个视图解析器
+         这里是逻辑视图
+         常用内部资源视图解析器
+    -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--        1.配置前缀-->
+        <property name="prefix" value="/jsp/"/>
+        <!--        2.配置后缀-->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <!-- 这里的name就是访问时的uri-->
+    <bean class="com.f.controller.HelloController" name="/helloController">
+
+    </bean>
+
+    <!--    使用注解要配置注解扫描包-->
+    <context:component-scan base-package="com.f.controller"/>
+
+
+</beans>

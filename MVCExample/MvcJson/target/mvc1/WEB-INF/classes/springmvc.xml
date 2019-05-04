@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+
+">
+
+    <!-- 配置一个视图解析器
+         这里是逻辑视图
+         常用内部资源视图解析器
+    -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--        1.配置前缀-->
+        <property name="prefix" value="/jsp/"/>
+        <!--        2.配置后缀-->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <!--    使用注解要配置注解扫描包-->
+    <context:component-scan base-package="com.f.controller"/>
+
+    <!-- servlet默认的处理者 静态资源放行
+         只添加这一个会导致所有Controller都会交给默认servlet处理
+    -->
+    <mvc:default-servlet-handler/>
+    <!--  mvc消息转换功能, 为了让原有的Controller生效，需添加下方配置-->
+    <mvc:annotation-driven/>
+
+</beans>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+">
+
+    <!-- 1.aop基于完成的，所以要激活自动代理-->
+    <aop:aspectj-autoproxy/>
+
+    <!-- 2.注册一个切面要使用的类，供切面使用(其实就是注册一个bean)-->
+    <bean class="com.f.advice.BeforeAdvice" id="beforeAdvice">
+    </bean>
+
+    <!-- 3.配置切入点信息-->
+    <aop:config>
+        <aop:aspect id="beforeAspect" ref="beforeAdvice">
+            <!--
+            ref 使用哪个切面类
+            aop:before 表明它确实是前置通知
+            method 指定用哪个方法
+            pointcut 切入点, 选择要切入哪个包下面的哪个类下面的哪个方法
+             -->
+            <aop:before method="methodBefore" pointcut="execution(* com.f.service.*.*(..))"></aop:before>
+            <!-- 多个建议时按先后顺序来-->
+            <aop:before method="before" pointcut="execution(* com.f.service.*.*(..))"></aop:before>
+        </aop:aspect>
+    </aop:config>
+
+    <bean class="com.f.service.ProviderService" id="providerService">
+        <!--        注册一个bean，就可以在test里ctx生产了-->
+    </bean>
+
+
+    <bean class="com.f.advice.AfterAdvice" id="afterAdvice">
+    </bean>
+    <bean class="com.f.advice.AfterReturningAdvice" id="afterReturningAdvice">
+    </bean>
+    <bean class="com.f.service.HelloServices" id="helloServices"></bean>
+    <bean class="com.f.advice.AroundAdvice" id="aroundAdvice"></bean>
+
+    <aop:config>
+        <aop:aspect id="afterAspect" ref="afterAdvice">
+            <!--
+                * com.f.service.*.*(..)  切无参
+                * com.f.service.*.*(java.lang.String)
+                * com.f.service.*.*(java.lang.String, int)
+             -->
+
+            <aop:after method="methodAfter" pointcut="execution(* com.f.service.*.*(..))"></aop:after>
+        </aop:aspect>
+
+        <aop:aspect  ref="afterReturningAdvice">
+            <aop:after-returning method="afterReturning" pointcut="execution(* com.f.service..*.*(..))"></aop:after-returning>
+
+        </aop:aspect>
+
+        <aop:aspect ref="aroundAdvice">
+            <aop:around method="around" pointcut="execution(* com.f.service.*.*(..))"></aop:around>
+        </aop:aspect>
+
+
+    </aop:config>
+
+
+
+
+
+
+
+
+</beans>

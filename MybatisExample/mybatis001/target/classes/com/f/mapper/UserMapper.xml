@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f.f.mapper.UserMapper">
+
+
+    <!--    result type对于多表查询往往需要使用result map进行详细描述，告诉mybatis如何封装-->
+
+    <resultMap id="userWithDetailMap" type="com.f.f.pojo.UserWithDetail">
+        <id property="id" column="uid"/>
+        <result property="phone" column="phone"/>
+        <result property="password" column="password"/>
+        <result property="createDate" column="create_date"/>
+
+        <association property="userDetail" javaType="com.f.f.pojo.UserDetail">
+            <!-- 要以javaType对应的数据类型里面的属性进行封装-->
+            <id property="id" column="udId"/>
+            <result property="address" column="address"/>
+            <result property="cid" column="cid"/>
+        </association>
+    </resultMap>
+
+
+    <resultMap id="userWithDetailMap2" type="com.f.f.pojo.UserWithDetail">
+        <id property="id" column="uid"/>
+        <result property="phone" column="phone"/>
+        <result property="password" column="password"/>
+        <result property="createDate" column="create_date"/>
+        <!--连缀点法-->
+        <result property="userDetail.id" column="udId"/>
+        <result property="userDetail.cid" column="cid"/>
+        <result property="userDetail.address" column="address"/>
+        <result property="userDetail.id" column="udId"/>
+
+    </resultMap>
+
+    <!--    <select id="queryById" resultType="com.f.f.pojo.UserWithDetail">-->
+    <select id="queryById" resultMap="userWithDetailMap2">
+        select t1.`id` as uid, t1.`phone`, t1.`password`, t1.`create_date`,
+        t2.`id` as udId, t2.`address`, t2.`cid`
+        from user t1, user_detail t2
+        <where>
+            t1.`id` = t2.`u_id`
+            and t1.`id` = #{id}
+        </where>
+
+    </select>
+
+    <resultMap id="userBaseMap" type="com.f.f.pojo.UserWithDetail">
+        <id property="id" column="uid"/>
+        <result property="phone" column="phone"/>
+        <result property="password" column="password"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <resultMap id="userWithBlog" extends="userBaseMap" type="com.f.f.pojo.UserBlog">
+        <!--        封装博客 一对多不能用association -->
+        <collection property="blog" ofType="com.f.f.pojo.Blog">
+            <id property="id" column="bid"/>
+            <id property="title" column="title"/>
+            <id property="summary" column="summary"/>
+            <id property="content" column="blogContent"/>
+            <!-- 博客里面有评论， 接着封装评论-->
+            <collection property="comments" ofType="com.f.f.pojo.Comment">
+                <id property="id" column="cid"/>
+                <id property="content" column="commentContent"/>
+            </collection>
+
+
+        </collection>
+
+
+    </resultMap>
+
+    <select id="queryByIdWithBlog" resultMap="userWithBlog">
+        select t1.`id` uid, t1.`phone`, t1.`password`,
+        t2.`id` bid, t2.`title`, t2.`summary`, t2.`content` blogContent,
+        t3.`id` cid, t3.`content` commentContent
+        from user t1, blog t2, comment t3
+        <where>
+            t1.`id` = t2.`u_id`
+            and t2.`id` = t3.`b_id`
+            and t1.`id` = #{id}
+        </where>
+
+    </select>
+</mapper>
