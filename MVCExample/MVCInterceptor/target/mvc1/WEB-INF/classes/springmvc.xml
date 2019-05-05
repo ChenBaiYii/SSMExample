@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+
+">
+
+    <!-- 配置一个视图解析器
+         这里是逻辑视图
+         常用内部资源视图解析器
+    -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--        1.配置前缀-->
+        <property name="prefix" value="/jsp/"/>
+        <!--        2.配置后缀-->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <!--    使用注解要配置注解扫描包-->
+    <context:component-scan base-package="com.f.controller"/>
+
+    <!-- servlet默认的处理者 静态资源放行
+         只添加这一个会导致所有Controller都会交给默认servlet处理
+    -->
+    <mvc:default-servlet-handler/>
+    <!--  mvc消息转换功能, 为了让原有的Controller生效，需添加下方配置-->
+    <mvc:annotation-driven/>
+
+    <!--    配置拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 拦截路径:
+                /* 的写法只能拦截一层 /someName
+                /**/*  多层任意路径的任意方法
+            -->
+            <mvc:mapping path="/**/*"/>
+            <!--            使用哪个拦截器-->
+            <bean class="com.f.interceptors.MethodTimerInterceptor">
+            </bean>
+        </mvc:interceptor>
+
+        <!-- 会话拦截器配置-->
+        <mvc:interceptor>
+            <!-- 仅拦截 user下的功能 /user/**/*
+                 同时需要开放登录权限
+             -->
+            <mvc:mapping path="/user/**/*"/>
+            <!-- 排除登录-->
+            <mvc:exclude-mapping path="/user/login"/>
+            <bean class="com.f.interceptors.SessionInterceptor">
+
+            </bean>
+        </mvc:interceptor>
+
+    </mvc:interceptors>
+
+</beans>
