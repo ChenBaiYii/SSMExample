@@ -14,6 +14,15 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * 拦截器顺序
+ * 如果有n个拦截器，并且都能拦截到某个url的时候，配置在前面的优先
+ * i1 i2 i3
+ * 前置 i1 i2 i3
+ * 后置 i3 i2 i1
+ */
+
+
 // 通过实现拦截器接口, 然后去springmvc配置文件中去配置
 public class MethodTimerInterceptor implements HandlerInterceptor {
     @Override  // 前置处理
